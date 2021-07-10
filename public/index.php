@@ -75,8 +75,6 @@ if (!$lines) {
 	return 1;
 }
 
-
-
 $template = file_get_contents(__DIR__ . '/../templates/template.kml');
 
 $content = sprintf($template, implode("\n\n", $lines));
