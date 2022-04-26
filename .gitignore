@@ -1,4 +1,5 @@
 /gpx/*
+!/gpx/.gitkeep
 /log/*
 !/log/.gitkeep
 /vendor
