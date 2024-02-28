@@ -2,7 +2,7 @@
 	<name>%s</name>
 	<Style>
 		<LineStyle>
-			<color>%s00</color>
+			<color>%s</color>
 			<width>1</width>
 		</LineStyle>
 	</Style>

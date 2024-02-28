@@ -66,7 +66,9 @@ foreach ($files as $key => $file) {
 		$previous = $point;
 	}
 
-	$lines[] = sprintf($placemarkTpl, $file->getBasename(), RandomColor::one(), implode(' ', $coordinates));
+	// convert hex color to plain hex BGR
+	$color = array_reverse(str_split(substr(RandomColor::one(['hue' => 'red', 'luminosity' => 'dark']), 1), 2));
+	$lines[] = sprintf($placemarkTpl, $file->getBasename(), vsprintf('#00%s%s%s', $color), implode(' ', $coordinates));
 }
 
 if (!$lines) {
