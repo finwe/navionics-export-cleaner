@@ -37,6 +37,8 @@ ksort($files);
 
 $placemarkTpl = file_get_contents(__DIR__ . '/../templates/placemark.tpl');
 
+$j = 0;
+
 /**
  * @var string $path
  * @var \SplFileInfo $file
@@ -47,28 +49,34 @@ foreach ($files as $key => $file) {
 	$previous = null;
 	$coordinates = [];
 
+	$j++;
 	$i = 0;
-	foreach ($xml->trk->trkseg->trkpt as $elId => $point) {
+	$segmentKey = 0;
+	foreach ($xml->trk->trkseg as $segment) {
 
-		$miss = $_GET['miss'] ?? $argv[1] ?? 10;
+		foreach ($segment->trkpt as $point) {
 
-		if ($i++ % $miss !== 0) {
-			continue;
+			$miss = $_GET['miss'] ?? $argv[1] ?? 10;
+
+			if ($i++ % $miss !== 0) {
+				continue;
+			}
+
+			$point = new Point((float) $point['lat'], (float) $point['lon']);
+			if ($previous && $point->compare($previous)) {
+				continue;
+			}
+
+			$coordinates[] = sprintf('%F,%F,0', $point->longitude, $point->latitude);
+
+			$previous = $point;
 		}
 
-		$point = new Point((float) $point['lat'], (float) $point['lon']);
-		if ($previous && $point->compare($previous)) {
-			continue;
-		}
-
-		$coordinates[] = sprintf('%F,%F,0', $point->longitude, $point->latitude);
-
-		$previous = $point;
+		// convert hex color to plain hex BGR
+		$color = array_reverse(str_split(substr(RandomColor::one(['hue' => 'red']), 1), 2));
+		$lines[$j] = sprintf($placemarkTpl, $file->getBasename(), vsprintf('#00%s%s%s', $color), implode(' ', $coordinates));
 	}
-
-	// convert hex color to plain hex BGR
-	$color = array_reverse(str_split(substr(RandomColor::one(['hue' => 'red', 'luminosity' => 'dark']), 1), 2));
-	$lines[] = sprintf($placemarkTpl, $file->getBasename(), vsprintf('#00%s%s%s', $color), implode(' ', $coordinates));
+	$segmentKey = 0;
 }
 
 if (!$lines) {
