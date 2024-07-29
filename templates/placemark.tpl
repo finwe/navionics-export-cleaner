@@ -3,7 +3,7 @@
 	<Style>
 		<LineStyle>
 			<color>%s</color>
-			<width>1</width>
+			<width>2</width>
 		</LineStyle>
 	</Style>
 	<LineString><coordinates>%s</coordinates></LineString>
